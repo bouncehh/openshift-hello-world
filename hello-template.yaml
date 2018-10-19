@@ -24,6 +24,8 @@ objects:
     source: 
       type: Binary
     strategy: 
+      rollingParams:
+        timeoutSeconds: 1800        
       sourceStrategy:
         from:
           kind: ImageStreamTag
