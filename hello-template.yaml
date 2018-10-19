@@ -116,7 +116,7 @@ objects:
   spec:
     to:
       kind: Service
-name: ${PARAM_APP_NAME}     
+      name: ${PARAM_APP_NAME}     
 - kind: ConfigMap
   apiVersion: v1
   metadata:
