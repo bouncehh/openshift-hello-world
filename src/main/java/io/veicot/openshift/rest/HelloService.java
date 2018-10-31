@@ -14,6 +14,6 @@ public class HelloService extends Application {
 	@GET
 	@Produces("text/plain")
 	public Response doGet() {
-		return Response.ok("Hello from OpenShift! (release/1.0.0 30/oct v2)").build();
+		return Response.ok("Hello from OpenShift! (release/1.0.0 30/oct v3)").build();
 	}
 }
