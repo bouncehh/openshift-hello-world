@@ -55,7 +55,7 @@ objects:
                 value: America/Argentina/Buenos_Aires
               - name: LANG_FILE
                 value: hello.es
-            image: ${PARAM_IMAGE_NAME}:latest
+            image: ${PARAM_IMAGE_NAME}:${PARAM_TAG_VER}            
             ports:
               - containerPort: 8080
                 protocol: TCP
@@ -137,6 +137,11 @@ parameters:
   name: PARAM_RTE_NAME
   value: ${PARAM_RTE_NAME}
 #  required: true     
+- description: The versiontag
+  displayName: The versiontag
+  name: PARAM_TAG_VER
+  value: ${PARAM_TAG_VER}
+#  required: true
 - description: The image name
   displayName: Image name
   name: PARAM_IMAGE_NAME
