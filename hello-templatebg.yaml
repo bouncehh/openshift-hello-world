@@ -110,7 +110,8 @@ objects:
 - apiVersion: v1
   kind: Route
   metadata:
-    name: ${PARAM_APP_NAME}
+#    name: ${PARAM_APP_NAME}
+    name: ${PARAM_ROUTE_NAME}
     labels:
       application: ${PARAM_APP_NAME}
   spec:
@@ -135,5 +136,10 @@ parameters:
 - description: The image name
   displayName: Image name
   name: PARAM_IMAGE_NAME
+  value: hello
+  required: true
+- description: The route name
+  displayName: Route name
+  name: PARAM_ROUTE_NAME
   value: hello
   required: true
