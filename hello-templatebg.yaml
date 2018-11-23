@@ -48,44 +48,50 @@ objects:
           deploymentConfig: ${PARAM_APP_NAME}
           name: ${PARAM_APP_NAME}
       spec:
-        containers:
-          - name: ${PARAM_APP_NAME}
-            env:
-              - name: TZ
-                value: America/Argentina/Buenos_Aires
-              - name: LANG_FILE
-                value: hello.es
-            image: ${PARAM_IMAGE_NAME}:latest
-            ports:
-              - containerPort: 8080
-                protocol: TCP
-            readinessProbe:
-              failureThreshold: 3
-              httpGet:
-                path: /rest/hello
-                port: 8080
-                scheme: HTTP
-              initialDelaySeconds: 60
-              periodSeconds: 10
-              successThreshold: 1
-              timeoutSeconds: 20
-            livenessProbe:
-              failureThreshold: 3
-              httpGet:
-                path: /rest/hello
-                port: 8080
-                scheme: HTTP
-              initialDelaySeconds: 120
-              periodSeconds: 10
-              successThreshold: 1
-              timeoutSeconds: 20
-            resources:
-              limits:
-                cpu: 500m
-                memory: 300Mi
-              requests:
-                cpu: 500m
-                memory: 300Mi
+        pods:
+          metadata:
+            name: ${PARAM_SVC_NAME}
+            labels:
+            name: ${PARAM_SVC_NAME}
+          spec:
+            containers:
+              - name: ${PARAM_SVC_NAME}
+                env:
+                  - name: TZ
+                    value: America/Argentina/Buenos_Aires
+                  - name: LANG_FILE
+                    value: hello.es
+                image: ${PARAM_IMAGE_NAME}:latest
+                ports:
+                  - containerPort: 8080
+                    protocol: TCP
+                readinessProbe:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /rest/hello
+                    port: 8080
+                    scheme: HTTP
+                  initialDelaySeconds: 60
+                  periodSeconds: 10
+                  successThreshold: 1
+                  timeoutSeconds: 20
+                livenessProbe:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /rest/hello
+                    port: 8080
+                    scheme: HTTP
+                  initialDelaySeconds: 120
+                  periodSeconds: 10
+                  successThreshold: 1
+                  timeoutSeconds: 20
+                resources:
+                  limits:
+                    cpu: 500m
+                    memory: 300Mi
+                  requests:
+                    cpu: 500m
+                    memory: 300Mi
     triggers: []
     replicas: 1 
     strategy: 
@@ -95,7 +101,7 @@ objects:
   metadata:
     labels:
       app: ${PARAM_APP_NAME}
-    name: ${PARAM_APP_NAME}
+    name: ${PARAM_SVC_NAME}
   spec:
     ports:
       - port: 8080
@@ -108,13 +114,13 @@ objects:
 - apiVersion: v1
   kind: Route
   metadata:
-    name: ${PARAM_RTE_NAME}
+    name: ${PARAM_APP_NAME}
     labels:
       application: ${PARAM_APP_NAME}
   spec:
     to:
       kind: Service
-      name: ${PARAM_APP_NAME}
+      name: ${PARAM_SVC_NAME}
       weight: 100
     wildcardPolicy: None      
 - kind: ConfigMap
@@ -132,10 +138,10 @@ parameters:
   name: PARAM_APP_NAME
   value: hello
   required: true
-- description: The route name
-  displayName: Rute name
-  name: PARAM_RTE_NAME
-  value: ${PARAM_RTE_NAME}
+- description: The service name
+  displayName: Service name
+  name: PARAM_SVC_NAME
+  value: ${PARAM_SVC_NAME}
 #  required: true     
 - description: The image name
   displayName: Image name
