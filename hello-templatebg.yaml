@@ -12,7 +12,7 @@ objects:
   metadata:
     labels:
       app: ${PARAM_APP_NAME}
-    name: ${PARAM_APP_NAME}
+    name: ${PARAM_IMAGE_NAME}
 - apiVersion: v1
   kind: BuildConfig
   metadata:
@@ -24,6 +24,8 @@ objects:
     source: 
       type: Binary
     strategy: 
+      rollingParams:
+        timeoutSeconds: 1800        
       sourceStrategy:
         from:
           kind: ImageStreamTag
@@ -48,50 +50,44 @@ objects:
           deploymentConfig: ${PARAM_APP_NAME}
           name: ${PARAM_APP_NAME}
       spec:
-        pods:
-          metadata:
-            name: ${PARAM_SVC_NAME}
-            labels:
-            name: ${PARAM_SVC_NAME}
-          spec:
-            containers:
-              - name: ${PARAM_SVC_NAME}
-                env:
-                  - name: TZ
-                    value: America/Argentina/Buenos_Aires
-                  - name: LANG_FILE
-                    value: hello.es
-                image: ${PARAM_IMAGE_NAME}:latest
-                ports:
-                  - containerPort: 8080
-                    protocol: TCP
-                readinessProbe:
-                  failureThreshold: 3
-                  httpGet:
-                    path: /rest/hello
-                    port: 8080
-                    scheme: HTTP
-                  initialDelaySeconds: 60
-                  periodSeconds: 10
-                  successThreshold: 1
-                  timeoutSeconds: 20
-                livenessProbe:
-                  failureThreshold: 3
-                  httpGet:
-                    path: /rest/hello
-                    port: 8080
-                    scheme: HTTP
-                  initialDelaySeconds: 120
-                  periodSeconds: 10
-                  successThreshold: 1
-                  timeoutSeconds: 20
-                resources:
-                  limits:
-                    cpu: 500m
-                    memory: 300Mi
-                  requests:
-                    cpu: 500m
-                    memory: 300Mi
+        containers:
+          - name: ${PARAM_APP_NAME}
+            env:
+              - name: TZ
+                value: America/Argentina/Buenos_Aires
+              - name: LANG_FILE
+                value: hello.es
+            image: ${PARAM_IMAGE_NAME}:latest
+            ports:
+              - containerPort: 8080
+                protocol: TCP
+            readinessProbe:
+              failureThreshold: 3
+              httpGet:
+                path: /rest/hello
+                port: 8080
+                scheme: HTTP
+              initialDelaySeconds: 60
+              periodSeconds: 10
+              successThreshold: 1
+              timeoutSeconds: 20
+            livenessProbe:
+              failureThreshold: 3
+              httpGet:
+                path: /rest/hello
+                port: 8080
+                scheme: HTTP
+              initialDelaySeconds: 120
+              periodSeconds: 10
+              successThreshold: 1
+              timeoutSeconds: 20
+            resources:
+              limits:
+                cpu: 500m
+                memory: 300Mi
+              requests:
+                cpu: 500m
+                memory: 300Mi
     triggers: []
     replicas: 1 
     strategy: 
@@ -101,7 +97,7 @@ objects:
   metadata:
     labels:
       app: ${PARAM_APP_NAME}
-    name: ${PARAM_SVC_NAME}
+    name: ${PARAM_APP_NAME}
   spec:
     ports:
       - port: 8080
@@ -120,9 +116,7 @@ objects:
   spec:
     to:
       kind: Service
-      name: ${PARAM_SVC_NAME}
-      weight: 100
-    wildcardPolicy: None      
+      name: ${PARAM_APP_NAME}     
 - kind: ConfigMap
   apiVersion: v1
   metadata:
@@ -138,11 +132,6 @@ parameters:
   name: PARAM_APP_NAME
   value: hello
   required: true
-- description: The service name
-  displayName: Service name
-  name: PARAM_SVC_NAME
-  value: ${PARAM_SVC_NAME}
-#  required: true     
 - description: The image name
   displayName: Image name
   name: PARAM_IMAGE_NAME
