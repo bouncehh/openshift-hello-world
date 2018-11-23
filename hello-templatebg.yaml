@@ -12,7 +12,7 @@ objects:
   metadata:
     labels:
       app: ${PARAM_APP_NAME}
-    name: ${PARAM_APP_NAME}
+    name: ${PARAM_IMAGE_NAME}
 - apiVersion: v1
   kind: BuildConfig
   metadata:
@@ -24,6 +24,8 @@ objects:
     source: 
       type: Binary
     strategy: 
+      rollingParams:
+        timeoutSeconds: 1800        
       sourceStrategy:
         from:
           kind: ImageStreamTag
@@ -49,7 +51,7 @@ objects:
           name: ${PARAM_APP_NAME}
       spec:
         containers:
-          - name: ${PARAM_SVC_NAME}
+          - name: ${PARAM_APP_NAME}
             env:
               - name: TZ
                 value: America/Argentina/Buenos_Aires
@@ -95,7 +97,7 @@ objects:
   metadata:
     labels:
       app: ${PARAM_APP_NAME}
-    name: ${PARAM_SVC_NAME}
+    name: ${PARAM_APP_NAME}
   spec:
     ports:
       - port: 8080
@@ -108,15 +110,14 @@ objects:
 - apiVersion: v1
   kind: Route
   metadata:
-    name: ${PARAM_APP_NAME}
+#    name: ${PARAM_APP_NAME}
+    name: ${PARAM_ROUTE_NAME}
     labels:
       application: ${PARAM_APP_NAME}
   spec:
     to:
       kind: Service
-      name: ${PARAM_SVC_NAME}
-      weight: 100
-    wildcardPolicy: None      
+      name: ${PARAM_APP_NAME}     
 - kind: ConfigMap
   apiVersion: v1
   metadata:
@@ -132,13 +133,13 @@ parameters:
   name: PARAM_APP_NAME
   value: hello
   required: true
-- description: The service name
-  displayName: Service name
-  name: PARAM_SVC_NAME
-  value: ${PARAM_SVC_NAME}
-#  required: true     
 - description: The image name
   displayName: Image name
   name: PARAM_IMAGE_NAME
+  value: hello
+  required: true
+- description: The route name
+  displayName: Route name
+  name: PARAM_ROUTE_NAME
   value: hello
   required: true
